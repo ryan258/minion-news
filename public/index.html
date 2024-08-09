@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Story Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        button { margin: 10px 0; }
+        #newsContainer { margin-top: 20px; }
+        .news-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; }
+        .copy-button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>AI News Story Generator</h1>
+    <button id="generateButton">Generate News Story</button>
+    <div id="newsContainer"></div>
+
+    <script>
+        const generateButton = document.getElementById('generateButton');
+        const newsContainer = document.getElementById('newsContainer');
+
+        generateButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/generate-news', { method: 'POST' });
+                const data = await response.json();
+
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+                newsItem.innerHTML = data.htmlContent;
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy HTML';
+                copyButton.className = 'copy-button';
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(data.htmlContent)
+                        .then(() => alert('HTML copied to clipboard!'))
+                        .catch(err => console.error('Failed to copy: ', err));
+                });
+
+                newsItem.appendChild(copyButton);
+                newsContainer.prepend(newsItem);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while generating the news story.');
+            }
+        });
+    </script>
+</body>
+</html>
