@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { FusionChain, MinimalChainable } from './fusion-chain.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs/promises';
 
 dotenv.config();
 
@@ -42,6 +43,12 @@ async function callOllama(model, prompt) {
   return jsonResponse.response || '';
 }
 
+async function logParodyStory(story) {
+  const timestamp = new Date().toISOString().replace(/:/g, '-');
+  const filename = `log_${timestamp}.txt`;
+  await fs.writeFile(path.join(__dirname, 'logs', filename), story);
+}
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -65,6 +72,10 @@ app.post('/generate-news', async (req, res) => {
     );
 
     const htmlContent = result.topResponse;
+    const parodyStory = result.allPromptResponses[0][1]; // Get the parody story before HTML conversion
+
+    // Log the parody story
+    await logParodyStory(parodyStory);
 
     res.json({ htmlContent });
   } catch (error) {

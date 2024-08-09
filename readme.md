@@ -8,6 +8,7 @@ This project uses the Ollama API to generate parody news stories in the style of
 - Transforms the news into a Minion-style parody
 - Converts the parody into HTML format
 - Provides a simple web interface to generate and display stories
+- Logs all generated parody stories for future reference
 
 ## Prerequisites
 
@@ -36,6 +37,11 @@ This project uses the Ollama API to generate parody news stories in the style of
    ```
    Adjust the `API_URL` and `MODEL_NAME` as needed for your Ollama setup.
 
+4. Create a `logs` directory in the project root:
+   ```
+   mkdir logs
+   ```
+
 ## Usage
 
 1. Start the server:
@@ -47,18 +53,22 @@ This project uses the Ollama API to generate parody news stories in the style of
 
 3. Click the "Generate News Story" button to create a new Minion-style parody news article
 
+4. Check the `logs` directory for saved parody stories
+
 ## Project Structure
 
 - `app.js`: Main application file, sets up the Express server and handles API routes
 - `fusion-chain.js`: Implements the FusionChain and MinimalChainable classes for multi-step AI processing
 - `public/index.html`: Frontend HTML file for the web interface
+- `logs/`: Directory containing logged parody stories
 
 ## How It Works
 
 1. The app generates a real news story about current events using Ollama
 2. It then transforms this story into a Minion-style parody
-3. Finally, it converts the parody into HTML format for display
-4. The frontend displays the generated HTML content and provides a button to copy it
+3. The parody story is logged to a file in the `logs` directory
+4. The parody is converted into HTML format for display
+5. The frontend displays the generated HTML content and provides a button to copy it
 
 ## Contributing
 
