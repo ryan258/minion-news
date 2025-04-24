@@ -22,4 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     button.disabled = false;
     button.textContent = 'Generate News Story';
   });
+
+  // Enable spacebar to trigger the Generate News Story button for accessibility
+  window.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && document.activeElement === document.body) {
+      const btn = document.getElementById('generateButton') || document.querySelector('button');
+      if (btn) btn.click();
+    }
+  });
 });

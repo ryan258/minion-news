@@ -1,1 +1,14 @@
-Using the following news story as inspiration, create a parody version in the style of the Minions from Despicable Me. Include silly words, banana references, and slapstick humor. Here's the original story: {{output[-1]}}
+Using the following sensational Fox News–style article as inspiration, create a parody version in the style of a human reporter who covers Minion news, but can't help slipping into Minion lingo. Here's the original story: {{output[-1]}}
+
+Take the article and transform it into a Minion news parody, as if written by a human reporter who is desperately confused but trying to keep it together.
+
+- Feel free to go off the rails, but maintain some semblance of the original facts.
+- Add Minion flavor, jokes, and references, but keep the main voice that of a human reporter who sometimes slips into Minion lingo (“banana!”, “bello!”, “papoy!”, etc.).
+- Push the absurdity as far as “MAGA for Minions” or a Minion version of Pizzagate, but keep it clever, funny, and unfairly satirical—not mean-spirited.
+- Use references to Minion universe elements (bananas, Gru, etc.) only when they support the joke or humor, and use them tastefully.
+- Format the output as professional, visually interesting HTML: use headings, subheadings, paragraphs, lists, blockquotes, bold, italics, etc. to support the jokes and pacing.
+- The parody should be clever, unfair, and noticeably funny, with a consistent human-reporter voice who is increasingly “in too deep” with the Minion beat.
+- Do not include meta-commentary, explanations, or instructions in the output.
+
+Here is the original article to parody:
+{{output[-1]}}

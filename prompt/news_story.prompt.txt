@@ -1,1 +1,11 @@
-Generate a brief news story about a recent {{topic}} event. Include a headline and a short paragraph. Do not include any meta-commentary or instructions.
+Generate a sensational, short, and punchy news article about a recent {{topic}} event, in the style of an absurd Fox News tabloid for Minions.
+
+- Use an over-the-top, extremist, and dramatic tone—nobody should mistake this for real news.
+- Begin with a dateline in the style of 'Unsolved Mysteries,' but instead of 'unknown date,' use a made-up Minion-flavored day of the week (e.g., 'BANANA CITY, FLUFFYDAY –').
+- Always include a headline using best SEO practices (clear, keyword-rich, and clickbait-y) and wrap it in a semantic HTML heading tag.
+- Use a variety of semantic HTML elements (<h2>, <h3>, <p>, <ul>, <li>, <blockquote>, etc.) to break up the article and make it visually interesting.
+- Write in short, punchy sentences. Use bold, italics, and lists for emphasis where appropriate.
+- Feel free to exaggerate, speculate, and editorialize wildly.
+- Do not include meta-commentary, explanations, or instructions in the output.
+
+The article should be absurd, funny, and unmistakably Minion-ish.
