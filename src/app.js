@@ -6,11 +6,14 @@ import { FusionChain, MinimalChainable } from './fusion-chain.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import helmet from 'helmet';
+import winston from 'winston';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(helmet());
 app.use(express.static('public'));
 
 const API_URL = process.env.API_URL;
@@ -19,6 +22,25 @@ const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json() // Used for file output
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.printf(({ level, message, timestamp }) =>
+          `[${timestamp}] ${level}: ${message}`
+        )
+      )
+    }),
+    new winston.transports.File({ filename: 'logs/app.log' })
+  ]
+});
 
 async function callOllama(model, prompt) {
   const response = await fetch(API_URL, {
@@ -34,11 +56,12 @@ async function callOllama(model, prompt) {
   });
 
   if (!response.ok) {
+    logger.error(`HTTP error! status: ${response.status}`);
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const jsonResponse = await response.json();
-  console.log('Raw API response:', JSON.stringify(jsonResponse, null, 2));
+  logger.info('Raw API response', { response: jsonResponse });
 
   return jsonResponse.response || '';
 }
@@ -47,6 +70,7 @@ async function logParodyStory(story) {
   const timestamp = new Date().toISOString().replace(/:/g, '-');
   const filename = `log_${timestamp}.txt`;
   await fs.writeFile(path.join(__dirname, 'logs', filename), story);
+  logger.info('Parody story logged', { file: filename });
 }
 
 app.get('/', (req, res) => {
@@ -79,11 +103,11 @@ app.post('/generate-news', async (req, res) => {
 
     res.json({ htmlContent });
   } catch (error) {
-    console.error('Detailed error:', error);
+    logger.error('Detailed error', { error });
     res.status(500).json({ error: 'An error occurred while processing your request.', details: error.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });
