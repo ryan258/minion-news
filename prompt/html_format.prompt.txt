@@ -1,0 +1,12 @@
+Convert the following Minion parody news story, written in Markdown, into well-structured HTML for display on a website. 
+
+- Render Markdown headlines as <h2> or <h3>.
+- Render paragraphs as <p>.
+- Render bullet points as <ul><li>.
+- Use semantic HTML and preserve all formatting.
+- Do not include meta-commentary or extra instructions.
+- Do not wrap the entire output in <pre> or <code> tags.
+- Do not output any raw Markdown, only HTML.
+- Make the HTML visually clear and accessible for screen readers.
+
+Here is the Markdown story: {{output[-1]}}

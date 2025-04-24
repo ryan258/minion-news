@@ -1,0 +1,1 @@
+Generate a brief news story about a recent {{topic}} event. Include a headline and a short paragraph. Do not include any meta-commentary or instructions.

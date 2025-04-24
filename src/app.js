@@ -97,6 +97,12 @@ function convertStoryToMarkdown(story) {
   return md.trim() + '\n';
 }
 
+// Helper to load prompt from file
+async function loadPrompt(filename) {
+  const promptPath = path.join(__dirname, '..', 'prompt', filename);
+  return (await fs.readFile(promptPath, 'utf8')).trim();
+}
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -104,11 +110,13 @@ app.get('/', (req, res) => {
 app.post('/generate-news', async (req, res) => {
   try {
     const context = { topic: "Current events" };
-    const prompts = [
-      "Generate a brief news story about a recent {{topic}} event. Include a headline and a short paragraph. Do not include any meta-commentary or instructions.",
-      "Using the following news story as inspiration, create a parody version in the style of the Minions from Despicable Me. Include silly words, banana references, and slapstick humor. Here's the original story: {{output[-1]}}",
-      "Convert the following Minion parody news story into HTML format. Use appropriate HTML tags for the headline and paragraph. Also include a 'Read More' link (use '#' as the href). Here's the story to convert: {{output[-1]}}"
-    ];
+    // Load prompts and system instructions from prompt directory
+    const newsPrompt = await loadPrompt('news_story.prompt.txt');
+    const parodyPrompt = await loadPrompt('minion_parody.prompt.txt');
+    const systemInstructions = await loadPrompt('system_instructions.txt');
+    const htmlFormatPrompt = await loadPrompt('html_format.prompt.txt');
+    // Combine system instructions and prompts
+    const prompts = [systemInstructions, newsPrompt, parodyPrompt, htmlFormatPrompt];
 
     const result = await FusionChain.run(
       context,
@@ -120,9 +128,9 @@ app.post('/generate-news', async (req, res) => {
     );
 
     const htmlContent = result.topResponse;
-    const parodyStory = result.allPromptResponses[0][1]; // Get the parody story before HTML conversion
+    const parodyStory = result.allPromptResponses[0][2]; // Still markdown version
 
-    // Log the parody story
+    // Log the parody story (markdown)
     await logParodyStory(parodyStory);
 
     res.json({ htmlContent });
