@@ -68,9 +68,33 @@ async function callOllama(model, prompt) {
 
 async function logParodyStory(story) {
   const timestamp = new Date().toISOString().replace(/:/g, '-');
-  const filename = `log_${timestamp}.txt`;
-  await fs.writeFile(path.join(__dirname, 'logs', filename), story);
-  logger.info('Parody story logged', { file: filename });
+  const mdFilename = `log_${timestamp}.md`;
+  // Write markdown log only
+  const mdContent = convertStoryToMarkdown(story);
+  await fs.writeFile(path.join(__dirname, '..', 'logs', mdFilename), mdContent);
+  logger.info('Parody story logged', { file: mdFilename });
+}
+
+// Converts a Minion parody story to markdown format
+function convertStoryToMarkdown(story) {
+  // Heuristic: Headline is first line, then paragraphs, then bullet points if present
+  const lines = story.split(/\r?\n/).filter(Boolean);
+  let md = '';
+  if (lines.length > 0) {
+    md += `# ${lines[0].replace(/^\*+\s*/, '')}\n\n`;
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('* ')) {
+        // Markdown bullet
+        md += `- ${line.slice(2)}\n`;
+      } else if (line.length > 0) {
+        md += `${line}\n\n`;
+      }
+    }
+  } else {
+    md = story;
+  }
+  return md.trim() + '\n';
 }
 
 app.get('/', (req, res) => {
