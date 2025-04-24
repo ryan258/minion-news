@@ -1,2 +1,4 @@
 node_modules
 .env
+logs/app.log
+logs/log_*.md

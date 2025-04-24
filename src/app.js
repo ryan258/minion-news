@@ -19,6 +19,9 @@ app.use(express.static('public'));
 const API_URL = process.env.API_URL;
 const MODEL_NAME = process.env.MODEL_NAME;
 const PORT = process.env.PORT || 3000;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_MODEL = process.env.OPENAI_MODEL;
+const MODEL_PROVIDER = process.env.MODEL_PROVIDER || 'ollama';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +67,55 @@ async function callOllama(model, prompt) {
   logger.info('Raw API response', { response: jsonResponse });
 
   return jsonResponse.response || '';
+}
+
+async function callOpenAI(model, prompt) {
+  logger.info('OpenAI call details', {
+    endpoint: 'https://api.openai.com/v1/chat/completions',
+    model,
+    prompt,
+    apiKeySet: Boolean(OPENAI_API_KEY),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY ? '[SET]' : '[NOT SET]'}`
+    }
+  });
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt }
+      ]
+    })
+  });
+
+  logger.info('OpenAI raw response status', { status: response.status, statusText: response.statusText });
+
+  const responseText = await response.text();
+  logger.info('OpenAI raw response body', { responseText });
+
+  if (!response.ok) {
+    logger.error(`OpenAI HTTP error! status: ${response.status}`);
+    throw new Error(`OpenAI HTTP error! status: ${response.status}. Body: ${responseText}`);
+  }
+
+  let jsonResponse;
+  try {
+    jsonResponse = JSON.parse(responseText);
+  } catch (e) {
+    logger.error('Failed to parse OpenAI JSON response', { responseText });
+    throw e;
+  }
+
+  logger.info('Raw OpenAI API response', { response: jsonResponse });
+  return jsonResponse.choices?.[0]?.message?.content || '';
 }
 
 async function logParodyStory(story) {
@@ -118,13 +170,14 @@ app.post('/generate-news', async (req, res) => {
     // Combine system instructions and prompts
     const prompts = [systemInstructions, newsPrompt, parodyPrompt, htmlFormatPrompt];
 
+    const modelToUse = MODEL_PROVIDER === 'openai' ? OPENAI_MODEL : MODEL_NAME;
     const result = await FusionChain.run(
       context,
-      [MODEL_NAME],
-      callOllama,
+      [modelToUse],
+      MODEL_PROVIDER === 'openai' ? callOpenAI : callOllama,
       prompts,
       async (outputs) => [outputs[outputs.length - 1], [1]],
-      () => MODEL_NAME
+      () => modelToUse
     );
 
     const htmlContent = result.topResponse;

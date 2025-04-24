@@ -12,5 +12,6 @@ Convert the following Minion parody news story, written in Markdown, into maxima
 - Do not output any raw Markdown, only HTML.
 - Preserve all jokes, punchlines, and Minion flavor from the parody.
 - Each story should have a unique, visually engaging structure—avoid repeating the same format every time.
+- When applying color to text, headings, or backgrounds, always choose colors that are easy to read on a white background. Avoid very light colors such as yellow, light gray, or pale pastels. Prefer bold, dark, or saturated colors (e.g., dark blue, dark green, orange, red, purple, black). Ensure all text and elements have strong contrast with the white background for maximum readability.
 
 Here is the Markdown story: {{output[-1]}}
